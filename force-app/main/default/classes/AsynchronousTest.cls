@@ -73,6 +73,7 @@ public with sharing class AsynchronousTest {
         System.assertEquals(1000000, insertedOpportunity.Amount, 'Opportunity Amount is incorrect.');
 
         // Next, we test the updateUserRoleName method
+
         UserRole[] updatedRoles = [SELECT Id, Name FROM UserRole WHERE Name = 'CRO' LIMIT 1];
         System.assertEquals(1, updatedRoles.size(), 'UserRole should exist.');
     }
