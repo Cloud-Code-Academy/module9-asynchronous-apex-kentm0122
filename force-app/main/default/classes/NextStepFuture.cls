@@ -30,7 +30,19 @@ public with sharing class NextStepFuture {
     //[public | private ] [static] data_type method_name (input parameters) {
     //  The body of the method
     //}
-
+    @future
+    public static void updateAllNextSteps() {
+        Account[] accounts = [SELECT Id, Name, Next_Step__c FROM Account];
+        for (Account currAcc : accounts) {
+            currAcc.Next_Step__c = 'Meeting in the future';
+            }
+            update accounts;
+        Opportunity[] opps = [SELECT Id, Name, NextStep FROM Opportunity];
+        for (Opportunity currOpp : opps) {
+            currOpp.NextStep = 'Meeting in the future';
+            }
+            update opps;
+    }
     /*
     * Question 2
     * Update/Uncomment the template code to create a method
@@ -40,25 +52,27 @@ public with sharing class NextStepFuture {
     //Mix DML Error happens when you try to perform DML operations on setup and non-setup objects in a single transaction.
     public static void createDealAndUpdateRole() {
         Opportunity bigDeal = new Opportunity();
-        insertBigDeal(bigDeal);
-
-        UserRole[] roles = [SELECT Id, Name FROM UserRole WHERE Id = :UserInfo.getUserRoleId() OR Name = 'CRO' LIMIT 1];
-        updateUserRoleName(roles);
+        insertBigDeal();
     }
 
     // Helper method to insert big deal
-    private static void insertBigDeal(Opportunity opp) {
+    private static void insertBigDeal() {
+        Opportunity opp = new Opportunity();
         opp.Amount = 1000000;
         opp.Name = 'Big Deal';
         opp.StageName = 'Closed Won'; 
         opp.CloseDate = Date.today();
         
         insert opp;
+
+        updateUserRoleName();
     }
 
 
     // Helper method to update role name
-    private static void updateUserRoleName(UserRole[] roles){
+    @future
+    public static void updateUserRoleName(){
+        UserRole[] roles = [SELECT Id, Name FROM UserRole WHERE Id = :UserInfo.getUserRoleId() OR Name = 'CRO' LIMIT 1];
         UserRole role;
         if (roles.isEmpty()) {
             role = new UserRole();
